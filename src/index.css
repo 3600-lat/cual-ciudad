@@ -8,10 +8,13 @@ body {
   flex-direction: column;
   --header-height: 6em;
   --action-button-height: 3em;
+  --horizontal-action-buttons-width: 48em;
+  --action-button-width: calc(var(--horizontal-action-buttons-width) / 3);
   --action-buttons-height: var(--action-button-height);
   --action-margin: 2em;
   --action-height: calc(var(--action-margin) + var(--action-buttons-height));
   --map-height: calc(100vh - var(--header-height) - var(--action-height));
+  min-width: var(--action-button-width);
 }
 
 .game-header {
@@ -61,13 +64,13 @@ body {
 .game-action ul li {
 }
 .game-action ul li button {
+  --action-button-margin: 0.5em;
   font-size: 1em;
-  width: 16em;
-  margin: 0.5em;
+  width: calc(var(--action-button-width) - var(--action-button-margin));
+  margin: var(--action-button-margin);
 }
 
-@media (orientation: portrait) {
-  /* vertical screen -> vertical list of buttons */
+@media (max-width: 48em) {
   .game {
     --action-buttons-height: calc(3 * var(--action-button-height));
   }

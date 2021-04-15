@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import places from "./places.json";
 
 function Header(props) {
   return (
@@ -31,7 +32,15 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      history: [{ answers: [], options: [1, 2, 3] }],
+      history: [
+        {
+          answers: [],
+          options: [
+            ...places.slice(0, 2).map((d) => d.name),
+            "Santa Cruz de La Sierra",
+          ],
+        },
+      ],
     };
   }
   handleClick(i) {}
