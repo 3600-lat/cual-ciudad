@@ -1,51 +1,60 @@
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
-}
-
-ol,
-ul {
-  padding-left: 30px;
-}
-
-.board-row:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-
-.status {
-  margin-bottom: 10px;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 34px;
-}
-
-.square:focus {
-  outline: none;
-}
-
-.kbd-navigation .square:focus {
-  background: #ddd;
+  margin: 0;
 }
 
 .game {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  --header-height: 6em;
+  --button-height: 30px;
+  --action-height: var(--button-height);
+  --map-height: calc(100vh - var(--header-height) - var(--action-height));
 }
 
-.game-info {
-  margin-left: 20px;
+.game-header {
+  background-color: blue;
+  height: var(--header-height);
+}
+.game-header > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 1em;
+}
+.game-header .header-title-box {
+  display: inline-block;
+}
+.game-header .header-title-box .header-title {
+  font-size: 1.1em;
+}
+.game-header .header-title-box .header-details {
+  font-size: 0.8em;
+}
+.game-header .header-score {
+  margin: auto 0 auto auto;
+}
+.game-map {
+  height: var(--map-height);
+  background-color: red;
+}
+.game-action {
+  height: var(--action-height);
+  background-color: green;
+}
+
+@media (orientation: portrait) {
+  /* vertical screen -> vertical list of buttons */
+  .game {
+    --action-height: calc(3 * var(--button-height));
+  }
+}
+
+@media (max-width: 35rem) {
+  .game {
+    --header-height: 5em;
+  }
+  .game-header .header-title-box .header-details {
+    display: none;
+  }
 }
