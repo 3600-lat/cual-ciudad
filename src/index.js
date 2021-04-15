@@ -11,21 +11,30 @@ function Header(props) {
           Encuentra la ciudad de Bolivia a partir de su forma. Buena suerte.
         </span>
       </div>
-      <span className="header-score">
-        {props.score.answers.length
-          ? `Score: ${props.score.ok} / ${props.score.answers}`
-          : "Score: -/-"}
-      </span>
+      <span className="header-score">{`Score: ${props.score}`}</span>
     </div>
   );
+}
+class Action extends React.Component {
+  render() {
+    const buttons = this.props.options.map((d, i) => {
+      return (
+        <li key={i}>
+          <button onClick={(i) => this.props.onClick(i)}>{d}</button>
+        </li>
+      );
+    });
+    return <ul>{buttons}</ul>;
+  }
 }
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      history: [{ answers: [] }],
+      history: [{ answers: [], options: [1, 2, 3] }],
     };
   }
+  handleClick(i) {}
   render() {
     const history = this.state.history;
     const current = history[history.length - 1];
@@ -53,9 +62,11 @@ class Game extends React.Component {
           }
         </div>
         <div className="game-action">
-          <div>{}</div>
           {
-            // <ol>{moves}</ol>
+            <Action
+              options={current.options}
+              onClick={(i) => this.handleClick(i)}
+            />
           }
         </div>
       </div>
@@ -64,7 +75,7 @@ class Game extends React.Component {
 }
 
 function calculateScore() {
-  return { answers: 5, ok: 3 };
+  return 0;
 }
 // ========================================
 

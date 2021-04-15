@@ -7,8 +7,10 @@ body {
   display: flex;
   flex-direction: column;
   --header-height: 6em;
-  --button-height: 30px;
-  --action-height: var(--button-height);
+  --action-button-height: 3em;
+  --action-buttons-height: var(--action-button-height);
+  --action-margin: 2em;
+  --action-height: calc(var(--action-margin) + var(--action-buttons-height));
   --map-height: calc(100vh - var(--header-height) - var(--action-height));
 }
 
@@ -34,19 +36,43 @@ body {
 .game-header .header-score {
   margin: auto 0 auto auto;
 }
+
 .game-map {
   height: var(--map-height);
   background-color: red;
 }
+
 .game-action {
   height: var(--action-height);
   background-color: green;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+.game-action ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+}
+.game-action ul li {
+}
+.game-action ul li button {
+  font-size: 1em;
+  width: 16em;
+  margin: 0.5em;
 }
 
 @media (orientation: portrait) {
   /* vertical screen -> vertical list of buttons */
   .game {
-    --action-height: calc(3 * var(--button-height));
+    --action-buttons-height: calc(3 * var(--action-button-height));
+  }
+  .game-action ul {
+    flex-direction: column;
   }
 }
 
