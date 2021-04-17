@@ -42,7 +42,20 @@ body {
 
 .game-map {
   height: var(--map-height);
+  position: relative;
+}
+.game-map .hint {
+  position: absolute;
   background-color: red;
+  top: 0;
+  left: 0;
+}
+.game-map .map-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .game-action {

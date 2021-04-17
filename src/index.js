@@ -1,7 +1,58 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import places from "./places.json";
+
+import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
+mapboxgl.workerClass = MapboxWorker;
+mapboxgl.accessToken =
+  "pk.eyJ1Ijoic2V2ZXJvYm8iLCJhIjoiY2trdTUxbWplMWs4ZDJxcW4wNDN6eTJ4bCJ9.nCWWPY2Lb8WuEngFH3GKNQ";
+
+// See https://dev.to/justincy/using-mapbox-gl-in-react-d2n
+function useMapBox({ onUpdate }) {
+  const ref = useRef(null);
+  const [map, setMap] = useState(null);
+  useEffect(() => {
+    // Don't create the map until the ref is connected to the container div.
+    // Also don't create the map if it's already been created.
+    if (ref.current) {
+      if (map === null) {
+        const map = new mapboxgl.Map({
+          container: ref.current,
+          style: "mapbox://styles/severobo/ckku5e4l92qh117n4v7kmg91k",
+        });
+        map.addControl(new mapboxgl.NavigationControl(), "top-right");
+        map.addControl(
+          new mapboxgl.ScaleControl({ maxWidth: 100, unit: "metric" })
+        );
+        setMap(map);
+      } else {
+        onUpdate(map);
+      }
+    }
+  }, [ref, map, onUpdate]);
+  return { ref };
+}
+
+function Map(props) {
+  const onUpdateHandler = (map) => {
+    // Add data and events here
+    // set the bounds, center and zoom
+    const cx = props.place.longitude;
+    const cy = props.place.latitude;
+    var bounds = [
+      [cx - 0.42, cy - 0.42], // Southwest
+      [cx + 0.42, cy + 0.42], // Northeast
+    ];
+    map.setMaxBounds(bounds);
+    map.setCenter([cx, cy]);
+    map.setZoom(12.5);
+  };
+  const { ref } = useMapBox({ onUpdate: onUpdateHandler });
+  return <div ref={ref} className="map-container" />;
+}
 
 function Header(props) {
   return (
@@ -71,6 +122,7 @@ class Game extends React.Component {
     const hasCorrectAnswer = answers.includes(question.correct);
     if (hasCorrectAnswer) {
       // TODO: after a transition
+      // It's not correct to update the state within render() -> Warning: Cannot update during an existing state transition (such as within `render`).
       this.goToNextStep();
     }
 
@@ -102,15 +154,8 @@ class Game extends React.Component {
           <Header score={score} />
         </header>
         <div className="game-map">
-          Correct answer is{" "}
-          {
-            question.correct.name
-
-            // <Board
-            //   squares={current.squares}
-            //   onClick={(i) => this.handleClick(i)}
-            // />
-          }
+          <Map place={question.correct} />
+          <div className="hint">Correct answer is {question.correct.name}</div>
         </div>
         <div className="game-action">{<Action options={options} />}</div>
       </div>
