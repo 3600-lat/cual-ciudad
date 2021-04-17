@@ -69,7 +69,14 @@ body {
   width: calc(var(--action-button-width) - var(--action-button-margin));
   margin: var(--action-button-margin);
 }
-
+.game-action ul li.correct button::before {
+  content: "✓ ";
+  color: green;
+}
+.game-action ul li.wrong button::before {
+  content: "❌ ";
+  color: red;
+}
 @media (max-width: 48em) {
   .game {
     --action-buttons-height: calc(3 * var(--action-button-height));
