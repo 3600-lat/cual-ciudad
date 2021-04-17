@@ -63,7 +63,7 @@ function Header(props) {
           Encuentra la ciudad de Bolivia a partir de su forma. Buena suerte.
         </span>
       </div>
-      <span className="header-score">{`Score: ${props.score}`}</span>
+      <span className="header-score">{`${props.score} pts`}</span>
     </div>
   );
 }
@@ -99,8 +99,8 @@ class Game extends React.Component {
       score: 0,
     });
   }
-  goToNextStep() {
-    const score = this.state.score + getPointsFromAnswers(this.state.answers);
+  goToNextStep(answers) {
+    const score = this.state.score + getPointsFromAnswers(answers);
     this.setState({
       score: score,
       answers: [],
@@ -108,9 +108,20 @@ class Game extends React.Component {
     });
   }
   setAnswer(answer) {
-    this.setState({
-      answers: [...this.state.answers, answer],
-    });
+    const questions = this.state.questions;
+    const stepNumber = this.state.stepNumber;
+    const question = questions[stepNumber];
+
+    const answers = [...this.state.answers, answer];
+    const hasCorrectAnswer = answers.includes(question.correct);
+
+    if (hasCorrectAnswer) {
+      this.goToNextStep(answers);
+    } else {
+      this.setState({
+        answers,
+      });
+    }
   }
   render() {
     const questions = this.state.questions;
@@ -119,15 +130,9 @@ class Game extends React.Component {
     const score = this.state.score;
 
     const question = questions[stepNumber];
-    const hasCorrectAnswer = answers.includes(question.correct);
-    if (hasCorrectAnswer) {
-      // TODO: after a transition
-      // It's not correct to update the state within render() -> Warning: Cannot update during an existing state transition (such as within `render`).
-      this.goToNextStep();
-    }
 
     function getDisabled(option) {
-      return hasCorrectAnswer || answers.includes(option);
+      return answers.includes(option);
     }
     function getClassName(option) {
       if (!answers.includes(option)) {
@@ -155,11 +160,12 @@ class Game extends React.Component {
         </header>
         <div className="game-map">
           <Map place={question.correct} />
-          <div className="hint">Correct answer is {question.correct.name}</div>
         </div>
+
         <div className="game-action">{<Action options={options} />}</div>
       </div>
     );
+    // <div className="hint">Correct answer is {question.correct.name}</div>
   }
 }
 
