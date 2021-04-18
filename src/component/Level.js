@@ -23,6 +23,7 @@ export default class Level extends React.Component {
     const statePatch = {
       score: score,
       answers,
+      currentAnswers,
     };
 
     const hasFinished = answers.length === this.state.questions.length;
@@ -84,7 +85,7 @@ export default class Level extends React.Component {
     });
 
     return (
-      <div className="game">
+      <div className="level">
         <header className="game-header">
           <Header score={score} />
         </header>
