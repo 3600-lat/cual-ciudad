@@ -6,22 +6,36 @@ body {
 .game {
   /* background-color: #fffcf0; */
   background-color: #454545;
-  color: white;
+  color: #fffcf0;
   display: flex;
   flex-direction: column;
   --header-height: 6em;
+  --footer-height: 6em;
   --action-button-height: 3em;
   --horizontal-action-buttons-width: 48em;
   --action-button-width: calc(var(--horizontal-action-buttons-width) / 3);
   --action-buttons-height: var(--action-button-height);
   --action-margin: 2em;
   --action-height: calc(var(--action-margin) + var(--action-buttons-height));
-  --map-height: calc(100vh - var(--header-height) - var(--action-height));
+  --map-height: calc(
+    100vh - var(--header-height) - var(--footer-height) - var(--action-height)
+  );
   min-width: var(--action-button-width);
 }
 
+.game a {
+  color: #fffcf0;
+  /* text-decoration: none; */
+}
+.game a:visited {
+  color: #fffcf0;
+}
+.game a:focus,
+.game a:hover {
+  /* text-decoration: underline; */
+}
+
 .game-header {
-  /* background-color: blue; */
   height: var(--header-height);
 }
 .game-header > div {
@@ -34,24 +48,30 @@ body {
   display: inline-block;
 }
 .game-header .header-title-box .header-title {
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 .game-header .header-title-box .header-details {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 .game-header .header-score {
   margin: auto 0 auto auto;
 }
-
+.game-footer {
+  height: var(--footer-height);
+  font-size: 0.8em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.game-footer p::before {
+  content: "፨";
+  display: block;
+  margin: 0.5em;
+}
 .game-map {
   height: var(--map-height);
   position: relative;
-}
-.game-map .hint {
-  position: absolute;
-  background-color: red;
-  top: 0;
-  left: 0;
 }
 .game-map .map-container {
   position: absolute;
@@ -63,7 +83,6 @@ body {
 
 .game-action {
   height: var(--action-height);
-  /* background-color: green; */
   display: flex;
   flex-direction: column;
   align-content: center;

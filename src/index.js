@@ -58,28 +58,41 @@ function Header(props) {
   return (
     <div>
       <div className="header-title-box">
-        <h1 className="header-title">¿Cuál ciudad?</h1>
+        <h1 className="header-title">¿Cuál es la ciudad?</h1>
         <span className="header-details">
-          Encuentra la ciudad de Bolivia a partir de su forma. Buena suerte.
+          Encuentra la ciudad boliviana a partir de su forma urbana. Buena
+          suerte.
         </span>
       </div>
       <span className="header-score">{`${props.score} pts`}</span>
     </div>
   );
 }
-class Action extends React.Component {
-  render() {
-    const buttons = this.props.options.map((d, i) => {
-      return (
-        <li key={i} className={d.className}>
-          <button onClick={d.onClick} disabled={d.disabled}>
-            {d.place.name}
-          </button>
-        </li>
-      );
-    });
-    return <ul>{buttons}</ul>;
-  }
+function Footer(props) {
+  return (
+    <div>
+      <p>
+        Mini-juego basado en{" "}
+        <a href="https://jamaps.github.io/city-guesser/index.html">
+          City Guesser
+        </a>{" "}
+        (Jeff Allen). Adaptado para Bolivia y móvil por Fernando Molina y
+        Sylvain Lesage de <a href="https://3600.lat/equipo/">3600.lat</a>.
+      </p>
+    </div>
+  );
+}
+function Action(props) {
+  const buttons = props.options.map((d, i) => {
+    return (
+      <li key={i} className={d.className}>
+        <button onClick={d.onClick} disabled={d.disabled}>
+          {d.place.name}
+        </button>
+      </li>
+    );
+  });
+  return <ul>{buttons}</ul>;
 }
 class Game extends React.Component {
   constructor(props) {
@@ -163,6 +176,9 @@ class Game extends React.Component {
         </div>
 
         <div className="game-action">{<Action options={options} />}</div>
+        <footer className="game-footer">
+          <Footer />
+        </footer>
       </div>
     );
     // <div className="hint">Correct answer is {question.correct.name}</div>
