@@ -1,154 +1,74 @@
-import React, { useRef, useEffect, useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import places from "./places.json";
+import Header from "./component/Header.js";
+import Map from "./component/Map.js";
+import Footer from "./component/Footer.js";
+import Action from "./component/Action.js";
 
-import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
-mapboxgl.workerClass = MapboxWorker;
-mapboxgl.accessToken =
-  "pk.eyJ1Ijoic2V2ZXJvYm8iLCJhIjoiY2trdTUxbWplMWs4ZDJxcW4wNDN6eTJ4bCJ9.nCWWPY2Lb8WuEngFH3GKNQ";
-
-// See https://dev.to/justincy/using-mapbox-gl-in-react-d2n
-function useMapBox({ onUpdate }) {
-  const ref = useRef(null);
-  const [map, setMap] = useState(null);
-  useEffect(() => {
-    // Don't create the map until the ref is connected to the container div.
-    // Also don't create the map if it's already been created.
-    if (ref.current) {
-      if (map === null) {
-        const map = new mapboxgl.Map({
-          container: ref.current,
-          style: "mapbox://styles/severobo/ckku5e4l92qh117n4v7kmg91k",
-        });
-        map.addControl(new mapboxgl.NavigationControl(), "top-right");
-        map.addControl(
-          new mapboxgl.ScaleControl({ maxWidth: 100, unit: "metric" })
-        );
-        setMap(map);
-      } else {
-        onUpdate(map);
-      }
-    }
-  }, [ref, map, onUpdate]);
-  return { ref };
-}
-
-function Map(props) {
-  const onUpdateHandler = (map) => {
-    // Add data and events here
-    // set the bounds, center and zoom
-    const cx = props.place.longitude;
-    const cy = props.place.latitude;
-    var bounds = [
-      [cx - 0.42, cy - 0.42], // Southwest
-      [cx + 0.42, cy + 0.42], // Northeast
-    ];
-    map.setMaxBounds(bounds);
-    map.setCenter([cx, cy]);
-    map.setZoom(12.5);
-  };
-  const { ref } = useMapBox({ onUpdate: onUpdateHandler });
-  return <div ref={ref} className="map-container" />;
-}
-
-function Header(props) {
-  return (
-    <div>
-      <div className="header-title-box">
-        <h1 className="header-title">¿Cuál es la ciudad?</h1>
-        <span className="header-details">
-          Encuentra la ciudad boliviana a partir de su forma urbana. Buena
-          suerte.
-        </span>
-      </div>
-      <span className="header-score">{`${props.score} pts`}</span>
-    </div>
-  );
-}
-function Footer(props) {
-  return (
-    <div>
-      <p>
-        Mini-juego basado en{" "}
-        <a href="https://jamaps.github.io/city-guesser/index.html">
-          City Guesser
-        </a>{" "}
-        (Jeff Allen). Adaptado para Bolivia y móvil por Fernando Molina y
-        Sylvain Lesage de <a href="https://3600.lat/equipo/">3600.lat</a>.
-      </p>
-    </div>
-  );
-}
-function Action(props) {
-  const buttons = props.options.map((d, i) => {
-    return (
-      <li key={i} className={d.className}>
-        <button onClick={d.onClick} disabled={d.disabled}>
-          {d.place.name}
-        </button>
-      </li>
-    );
-  });
-  return <ul>{buttons}</ul>;
-}
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       stepNumber: 0,
+      level: { number: 1, questions: 3 },
+      questions: initQuestions(3),
       answers: [],
-      questions: initQuestions(),
+      currentAnswers: [],
       score: 0,
     };
   }
-  restart() {
-    this.setState({
-      stepNumber: 0,
-      answers: [],
-      questions: initQuestions(),
-      score: 0,
-    });
-  }
-  goToNextStep(answers) {
-    const score = this.state.score + getPointsFromAnswers(answers);
-    this.setState({
+  goToNextStep(currentAnswers) {
+    const score = this.state.score + getPointsFromAnswers(currentAnswers);
+    const answers = [...this.state.answers, currentAnswers];
+
+    const statePatch = {
       score: score,
-      answers: [],
-      stepNumber: this.state.stepNumber + 1,
-    });
+      answers,
+    };
+
+    const hasFinished = answers.length === this.state.questions.length;
+    if (!hasFinished) {
+      // don't increment if it was the last one, in order to show the las question behind the modal
+      statePatch.stepNumber = this.state.stepNumber + 1;
+      statePatch.currentAnswers = [];
+    }
+
+    this.setState(statePatch);
   }
   setAnswer(answer) {
     const questions = this.state.questions;
     const stepNumber = this.state.stepNumber;
     const question = questions[stepNumber];
 
-    const answers = [...this.state.answers, answer];
-    const hasCorrectAnswer = answers.includes(question.correct);
+    const currentAnswers = [...this.state.currentAnswers, answer];
+    const hasCorrectAnswer = currentAnswers.includes(question.correct);
 
     if (hasCorrectAnswer) {
-      this.goToNextStep(answers);
+      this.goToNextStep(currentAnswers);
     } else {
       this.setState({
-        answers,
+        currentAnswers,
       });
     }
   }
   render() {
     const questions = this.state.questions;
+    //const answers = this.state.answers;
     const stepNumber = this.state.stepNumber;
-    const answers = this.state.answers;
-    const score = this.state.score;
+    const currentAnswers = this.state.currentAnswers;
 
+    const score = this.state.score;
     const question = questions[stepNumber];
+    // only for the last question of the quiz
+    const hasCorrectAnswer = currentAnswers.includes(question.correct);
 
     function getDisabled(option) {
-      return answers.includes(option);
+      return hasCorrectAnswer || currentAnswers.includes(option);
     }
     function getClassName(option) {
-      if (!answers.includes(option)) {
+      if (!currentAnswers.includes(option)) {
         return "question";
       }
       if (option === question.correct) {
@@ -181,7 +101,6 @@ class Game extends React.Component {
         </footer>
       </div>
     );
-    // <div className="hint">Correct answer is {question.correct.name}</div>
   }
 }
 
@@ -211,21 +130,23 @@ function getRandom(arr, n) {
   }
   return result;
 }
-function initQuestions() {
+function initQuestions(numQuestions) {
   const numOptions = 3;
-  return shuffle([...places]).map((d) => {
-    // get three random places, and replace one with d
-    const options = getRandom(places, numOptions);
-    if (options.indexOf(d) === -1) {
-      options[numOptions - 1] = d;
-    }
-    const shuffledOptions = shuffle(options);
+  return shuffle([...places])
+    .slice(0, numQuestions)
+    .map((d) => {
+      // get three random places, and replace one with d
+      const options = getRandom(places, numOptions);
+      if (options.indexOf(d) === -1) {
+        options[numOptions - 1] = d;
+      }
+      const shuffledOptions = shuffle(options);
 
-    return {
-      correct: d,
-      options: shuffledOptions,
-    };
-  });
+      return {
+        correct: d,
+        options: shuffledOptions,
+      };
+    });
 }
 function getPointsFromAnswers(answers) {
   const length = answers.length;
