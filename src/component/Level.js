@@ -3,17 +3,19 @@ import Header from "./Header.js";
 import Map from "./Map.js";
 import Footer from "./Footer.js";
 import Action from "./Action.js";
+import Modal from "./Modal.js";
 
 export default class Level extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       level: props.level,
-      questions: initQuestions(props.places, 3),
+      questions: initQuestions(props.places, props.level.numQuestions),
       stepNumber: 0,
       answers: [],
       currentAnswers: [],
       score: 0,
+      toNextLevel: props.toNextLevel,
     };
   }
   goToNextStep(currentAnswers) {
@@ -53,7 +55,7 @@ export default class Level extends React.Component {
   }
   render() {
     const questions = this.state.questions;
-    //const answers = this.state.answers;
+    const answers = this.state.answers;
     const stepNumber = this.state.stepNumber;
     const currentAnswers = this.state.currentAnswers;
 
@@ -61,6 +63,7 @@ export default class Level extends React.Component {
     const question = questions[stepNumber];
     // only for the last question of the quiz
     const hasCorrectAnswer = currentAnswers.includes(question.correct);
+    const hasFinished = answers.length === questions.length;
 
     function getDisabled(option) {
       return hasCorrectAnswer || currentAnswers.includes(option);
@@ -92,11 +95,15 @@ export default class Level extends React.Component {
         <div className="game-map">
           <Map place={question.correct} />
         </div>
-
         <div className="game-action">{<Action options={options} />}</div>
         <footer className="game-footer">
           <Footer />
         </footer>
+        <Modal
+          disabled={!hasFinished}
+          score={score}
+          toNextLevel={this.state.toNextLevel}
+        />
       </div>
     );
   }
