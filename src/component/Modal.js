@@ -1,10 +1,10 @@
 import ReactModal from "react-modal";
 
-export default function Modal(props) {
+export default function Modal({ score, toNextLevel, disabled = false }) {
   return (
-    <ReactModal isOpen={!props.disabled}>
-      Tu score es {props.score} puntos.
-      <button onClick={props.toNextLevel}>Siguente nivel</button>
+    <ReactModal isOpen={!disabled}>
+      Tu score es {score} puntos.
+      <button onClick={toNextLevel}>Siguente nivel</button>
     </ReactModal>
   );
 }
