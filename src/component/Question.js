@@ -2,16 +2,15 @@ import React from "react";
 import Map from "./Map.js";
 import Action from "./Action.js";
 
-export default function Question({ question, questionAnswers, updateAnswers }) {
+export default function Question({ question, answers, updateAnswers }) {
   function setAnswer(answer) {
-    updateAnswers([...questionAnswers, answer]);
+    updateAnswers([...answers, answer]);
   }
-
   function getDisabled(option) {
-    return questionAnswers.includes(option);
+    return answers.includes(option);
   }
   function getClassName(option) {
-    if (!questionAnswers.includes(option)) {
+    if (!answers.includes(option)) {
       return "question";
     }
     if (option === question.correct) {

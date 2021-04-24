@@ -7,14 +7,7 @@ import Footer from "./Footer.js";
 
 // const games = [];
 export default function App({ places }) {
-  const [state, setState] = useState({
-    level: null,
-    questions: [],
-    answers: [],
-    questionNumber: 0,
-    questionAnswers: [],
-    score: 0,
-  });
+  const [state, setState] = useState(emptyState());
   const {
     level,
     questions,
@@ -26,17 +19,13 @@ export default function App({ places }) {
 
   function createGame(level) {
     setState({
+      ...emptyState(),
       level,
       questions: initQuestions(places, level.numQuestions),
-      answers: [],
-      questionNumber: 0,
-      questionAnswers: [],
-      score: 0,
     });
   }
-  function processAnswers(questionAnswers, question) {
-    const hasCorrectAnswer = questionAnswers.includes(question.correct);
-    if (hasCorrectAnswer) {
+  function processAnswers(questionAnswers, correctAnswer) {
+    if (questionAnswers.includes(correctAnswer)) {
       setState({
         ...state,
         answers: [...answers, questionAnswers],
@@ -54,14 +43,7 @@ export default function App({ places }) {
 
   function reset() {
     //games.push(game); // side effect (=> useEffect ?)
-    setState({
-      level: null,
-      questions: [],
-      answers: [],
-      questionNumber: 0,
-      questionAnswers: [],
-      score: 0,
-    });
+    setState(emptyState());
   }
 
   let main;
@@ -78,10 +60,8 @@ export default function App({ places }) {
     main = (
       <Question
         question={question}
-        questionAnswers={questionAnswers}
-        updateAnswers={(questionAnswers) =>
-          processAnswers(questionAnswers, question)
-        }
+        answers={questionAnswers}
+        updateAnswers={(answers) => processAnswers(answers, question.correct)}
       />
     );
   }
@@ -97,6 +77,17 @@ export default function App({ places }) {
       </footer>
     </div>
   );
+}
+
+function emptyState() {
+  return {
+    level: null,
+    questions: [],
+    answers: [],
+    questionNumber: 0,
+    questionAnswers: [],
+    score: 0,
+  };
 }
 
 /**
