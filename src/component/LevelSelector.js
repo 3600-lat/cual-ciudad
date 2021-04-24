@@ -18,7 +18,7 @@ export default function LevelSelector({ setLevel }) {
   });
   return (
     <div className="level-selector">
-      <ul className="vertical-buttons">{buttons}</ul>
+      <ul>{buttons}</ul>
     </div>
   );
 }

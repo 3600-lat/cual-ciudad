@@ -3,7 +3,7 @@ import Map from "./Map.js";
 import Action from "./Action.js";
 
 export default function Question({ question, returnAnswers }) {
-  // better use only one state for the four variables, because they are generally updated together
+  // stateful component to manage the answers until the right one is picked
   const [currentAnswers, setCurrentAnswers] = useState([]);
 
   function setAnswer(answer) {

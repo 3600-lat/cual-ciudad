@@ -1,4 +1,6 @@
-export default function Header(props) {
+import Score from "./Score.js";
+
+export default function Header({ score }) {
   return (
     <div>
       <div className="header-title-box">
@@ -9,7 +11,7 @@ export default function Header(props) {
         </span>
       </div>
 
-      <span className="header-score">{`${props.score} pts`}</span>
+      <Score score={score} />
     </div>
   );
 }
