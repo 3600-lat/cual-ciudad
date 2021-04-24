@@ -3,7 +3,7 @@ body {
   margin: 0;
 }
 
-.game {
+.app {
   /* background-color: #fffcf0; */
   background-color: #454545;
   color: #fffcf0;
@@ -11,27 +11,31 @@ body {
   flex-direction: column;
   --header-height: 6em;
   --footer-height: 6em;
-  --action-button-height: 3em;
+
   --horizontal-action-buttons-width: 48em;
-  --action-button-width: calc(var(--horizontal-action-buttons-width) / 3);
-  --action-buttons-height: var(--action-button-height);
+
+  --button-width: calc(var(--horizontal-action-buttons-width) / 3);
+  --button-height: 3em;
+  --button-margin: 2em;
+
+  --action-buttons-height: var(--button-height);
   --action-margin: 2em;
   --action-height: calc(var(--action-margin) + var(--action-buttons-height));
   --map-height: calc(
     100vh - var(--header-height) - var(--footer-height) - var(--action-height)
   );
-  min-width: var(--action-button-width);
+  min-width: var(--button-width);
 }
 
-.game a {
+.app a {
   color: #fffcf0;
   /* text-decoration: none; */
 }
-.game a:visited {
+.app a:visited {
   color: #fffcf0;
 }
-.game a:focus,
-.game a:hover {
+.app a:focus,
+.app a:hover {
   /* text-decoration: underline; */
 }
 
@@ -56,7 +60,7 @@ body {
 .game-header .header-score {
   margin: auto 0 auto auto;
 }
-.game-footer {
+.app-footer {
   height: var(--footer-height);
   font-size: 0.8em;
   text-align: center;
@@ -64,7 +68,7 @@ body {
   align-items: center;
   justify-content: center;
 }
-.game-footer p::before {
+.app-footer p::before {
   content: "፨";
   display: block;
   margin: 0.5em;
@@ -81,13 +85,7 @@ body {
   right: 0;
 }
 
-.game-action {
-  height: var(--action-height);
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-}
-.game-action ul {
+ul.vertical-buttons {
   list-style: none;
   padding: 0;
   display: flex;
@@ -96,13 +94,26 @@ body {
   justify-content: center;
   margin: auto 0;
 }
-.game-action ul li {
+ul.vertical-buttons li {
 }
-.game-action ul li button {
-  --action-button-margin: 0.5em;
+ul.vertical-buttons li button {
+  --button-margin: 0.5em;
   font-size: 1em;
-  width: calc(var(--action-button-width) - var(--action-button-margin));
-  margin: var(--action-button-margin);
+  width: calc(var(--button-width) - var(--button-margin));
+  margin: var(--button-margin);
+}
+
+.level-selector {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.game-action {
+  height: var(--action-height);
+  display: flex;
+  flex-direction: column;
+  align-content: center;
 }
 .game-action ul li.correct button::before {
   content: "✓ ";
@@ -113,8 +124,8 @@ body {
   color: red;
 }
 @media (max-width: 48em) {
-  .game {
-    --action-buttons-height: calc(3 * var(--action-button-height));
+  .app {
+    --action-buttons-height: calc(3 * var(--button-height));
   }
   .game-action ul {
     flex-direction: column;
@@ -122,7 +133,7 @@ body {
 }
 
 @media (max-width: 35rem) {
-  .game {
+  .app {
     --header-height: 5em;
   }
   .game-header .header-title-box .header-details {
