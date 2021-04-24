@@ -1,27 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import Map from "./Map.js";
 import Action from "./Action.js";
 
-export default function Question({ question, returnAnswers }) {
-  // stateful component to manage the answers until the right one is picked
-  const [currentAnswers, setCurrentAnswers] = useState([]);
-
+export default function Question({ question, questionAnswers, updateAnswers }) {
   function setAnswer(answer) {
-    const newCurrentAnswers = [...currentAnswers, answer];
-    const hasCorrectAnswer = newCurrentAnswers.includes(question.correct);
-
-    if (hasCorrectAnswer) {
-      returnAnswers(newCurrentAnswers);
-    } else {
-      setCurrentAnswers(newCurrentAnswers);
-    }
+    updateAnswers([...questionAnswers, answer]);
   }
 
   function getDisabled(option) {
-    return currentAnswers.includes(option);
+    return questionAnswers.includes(option);
   }
   function getClassName(option) {
-    if (!currentAnswers.includes(option)) {
+    if (!questionAnswers.includes(option)) {
       return "question";
     }
     if (option === question.correct) {

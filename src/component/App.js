@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "./Header.js";
 import LevelSelector from "./LevelSelector.js";
 import Question from "./Question.js";
-import GameResult from "./GameResult.js";
+import Result from "./Result.js";
 import Footer from "./Footer.js";
 
 // const games = [];
@@ -11,51 +11,77 @@ export default function App({ places }) {
     level: null,
     questions: [],
     answers: [],
-    score: 0,
     questionNumber: 0,
+    questionAnswers: [],
+    score: 0,
   });
-  const { level, questions, questionNumber, answers, score } = state;
+  const {
+    level,
+    questions,
+    answers,
+    questionNumber,
+    questionAnswers,
+    score,
+  } = state;
 
   function createGame(level) {
     setState({
-      ...state,
       level,
       questions: initQuestions(places, level.numQuestions),
       answers: [],
-      score: 0,
       questionNumber: 0,
+      questionAnswers: [],
+      score: 0,
     });
   }
-  function processAnswers(questionAnswers) {
-    setState({
-      ...state,
-      answers: [...answers, questionAnswers],
-      score: score + getPointsFromAnswers(questionAnswers),
-      questionNumber: questionNumber + 1,
-    });
+  function processAnswers(questionAnswers, question) {
+    const hasCorrectAnswer = questionAnswers.includes(question.correct);
+    if (hasCorrectAnswer) {
+      setState({
+        ...state,
+        answers: [...answers, questionAnswers],
+        questionNumber: questionNumber + 1,
+        questionAnswers: [],
+        score: score + getPointsFromAnswers(questionAnswers),
+      });
+    } else {
+      setState({
+        ...state,
+        questionAnswers,
+      });
+    }
   }
 
   function reset() {
     //games.push(game); // side effect (=> useEffect ?)
-    setState({ ...state, level: null });
+    setState({
+      level: null,
+      questions: [],
+      answers: [],
+      questionNumber: 0,
+      questionAnswers: [],
+      score: 0,
+    });
   }
-
-  const question = questions[questionNumber];
 
   let main;
   if (level === null) {
     // level selector
     // TODO: pass the previous best score in every level
     main = <LevelSelector setLevel={(level) => createGame(level)} />;
-  } else if (state.questions.length === state.answers.length) {
+  } else if (questionNumber === questions.length) {
     // show the result
-    main = <GameResult game={state} goToNext={() => reset()} />;
+    main = <Result game={state} goToNext={() => reset()} />;
   } else {
     // show the question
+    const question = questions[questionNumber];
     main = (
       <Question
         question={question}
-        returnAnswers={(questionAnswers) => processAnswers(questionAnswers)}
+        questionAnswers={questionAnswers}
+        updateAnswers={(questionAnswers) =>
+          processAnswers(questionAnswers, question)
+        }
       />
     );
   }
